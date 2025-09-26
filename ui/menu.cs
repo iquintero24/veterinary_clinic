@@ -1,11 +1,16 @@
 namespace ClinicaSalud.ui;
+
 public class Menu
 {
+    // Instance of patient service
     private patientService patientService = new patientService();
+
+    // Instance of validation service
+    private Validations validations = new Validations();
 
     public void MostrarMenu()
     {
-        
+
         while (true)
         {
             Console.Clear();
@@ -23,39 +28,74 @@ public class Menu
                     // Lógica para agregar paciente
                     Console.WriteLine("Register patient.");
 
-                    Console.Write("Enter patient's name: ");
-                    string name = Console.ReadLine() ?? "";
+                    string name;
+                    while (true)
+                    {
+                        Console.Write("Enter patient's name: ");
+                        name = Console.ReadLine() ?? "";
 
-                    Console.Write("Enter patient's age: ");
-                    int age = int.Parse(Console.ReadLine() ?? "0");
-                    
+                        if (validations.ValidateName(name))
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid name. Please enter a valid name.");
+                        }
+                    }
+
+                    int age;
+                    while (true)
+                    {
+                        Console.Write("Enter patient's age: ");
+                        string inputAge = Console.ReadLine() ?? "";
+
+                        // Convert to int if int is valid age = input age and greater than 0
+                        if (int.TryParse(inputAge, out age) && validations.ValidationEdad(age))
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid age. Please enter a valid number.");
+                        }
+                    }
+
                     Console.Write("Enter patient's symptoms: ");
                     string sintomas = Console.ReadLine() ?? "";
 
-                    // Create a new patient instance
+                    // Create new patient and register
                     var newPatient = new models.Patient(name, age, sintomas);
                     patientService.RegisterPatient(newPatient);
+
+                    // Confirmation message
                     Console.WriteLine("Patient registered successfully.");
                     Console.ReadKey();
-
                     break;
+
                 case "2":
                     // logic to list patients
                     patientService.ListPatient();
-                    Console.WriteLine("Ver Pacientes seleccionado.");
+                    Console.WriteLine("show pacients register.");
                     break;
                 case "3":
-                    Console.WriteLine("Buscar un paciente por el nombre");
-                    Console.WriteLine("Ingrese el nombre del paciente: ");
+                    // logic to search patient by name
+                    Console.WriteLine("Search for a patient by name");
+
+                    // Input the name to search
+                    Console.WriteLine("Enter the patient's name: ");
                     string NamePatient = Console.ReadLine() ?? "";
+
+                    // Call the search method
                     patientService.SearchPatientsByName(NamePatient);
+
                     break;
                 case "4":
-                    // Salir del programa
-                    Console.WriteLine("Saliendo...");
+                    // Out the program
+                    Console.WriteLine("leaving...");
                     return;
                 default:
-                    Console.WriteLine("Opcion no valida, intente de nuevo.");
+                    Console.WriteLine("Invalid option, try again..");
                     break;
             }
         }
