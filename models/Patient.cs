@@ -5,20 +5,28 @@ namespace models;
 /// </summary>
 public class Patient
 {
-    //public, private ,pretected, internal is emcapsulations
+    // Unique patient identifier
+    public Guid Id { get; set; } = Guid.NewGuid();
 
-    public Guid Id { get; set; } = Guid.NewGuid(); // unique patient identifier 
-    public string Name { get; set; }  // patient's name
-    public int Age { get; set; } // patient's age
-    public string Sintomas { get; set; } // patient's symptoms
+    // Patient's name
+    public string Name { get; set; }
+
+    // Patient's age
+    public int Age { get; set; }
+
+    // Patient's symptoms
+    public string Sintomas { get; set; }
+
+    // List of pets owned by this patient
+    public List<Pet> Pets { get; set; } = new List<Pet>();
 
     // Constructor to initialize a new patient
     public Patient(string name, int age, string sintomas)
     {
         Id = Guid.NewGuid(); // generate a new unique identifier
-        Name = name; // set patient's name
-        Age = age; // set patient's age
-        Sintomas = sintomas; // set patient's symptoms
+        Name = name;
+        Age = age;
+        Sintomas = sintomas;
     }
 
     /// <summary>
@@ -27,7 +35,18 @@ public class Patient
     public void mostrarInfo()
     {
         Console.WriteLine($"ID: {Id}, Name: {Name}, Age: {Age}, Symptoms: {Sintomas}");
+
+        if (Pets.Count > 0)
+        {
+            Console.WriteLine("Pets:");
+            foreach (var pet in Pets)
+            {
+                Console.WriteLine($"  - {pet.Name}, Species: {pet.Species}, Breed: {pet.Breed}, Age: {pet.Age}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("No pets registered for this patient.");
+        }
     }
-
-
 }

@@ -1,92 +1,45 @@
 
 using models;
 
+/// <summary>
+/// Service class responsible for managing patients in memory.
+/// Provides operations to register, retrieve and search patients.
+/// </summary>
 public class patientService
 {
-
+    /// <summary>
+    /// Internal list that stores all registered patients.
+    /// </summary>
     private List<Patient> Patients = new List<Patient>();
 
     /// <summary>
-    /// Method to register a new Patient
+    /// Registers a new patient into the system.
     /// </summary>
-    /// <param name="Patient">
-    public void RegisterPatient(Patient Patient)
+    /// <param name="patient">The patient object to be added.</param>
+    public void RegisterPatient(Patient patient)
     {
-        try
-        {
-            Patients.Add(Patient);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occurred while registering the patient.{ex.Message}");
-            Console.ReadKey();
-        }
+        Patients.Add(patient);
     }
 
     /// <summary>
-    /// List the patient 
+    /// Retrieves all registered patients.
     /// </summary>
-    public void ListPatient()
+    /// <returns>A list containing all patients.</returns>
+    public List<Patient> GetAllPatients()
     {
-        // list the patient
-        try
-        {
-            if (Patients.Count > 0)
-            {
-                int i = 1;
-                foreach (var Patient in Patients)
-                {
-                    Console.WriteLine($"{i}: Name: {Patient.Name} Age: {Patient.Age} Symptoms: {Patient.Sintomas}");
-                    i++;
-                }
-            }
-            else
-            {
-                Console.WriteLine("No patients registered.");
-            }
-            Console.ReadKey();
-        }
-        catch (Exception ex)
-        {
-
-            Console.WriteLine($"An error occurred while listing patients. {ex.Message}");
-            Console.ReadKey();
-        }
-
+        return Patients;
     }
 
     /// <summary>
-    ///  seach the patient by name.
+    /// Searches for a patient by name (case-insensitive).
     /// </summary>
-    /// <param name="PatientName"></param>
-    public void SearchPatientsByName(string PatientName)
+    /// <param name="patientName">The name of the patient to search for.</param>
+    /// <returns>
+    /// The patient object if found; otherwise, null.
+    /// </returns>
+    public Patient? SearchPatientsByName(string patientName)
     {
-        // Search for a patient by name
-        try
-        {
-            //create the linq query
-            var Patient = Patients.FirstOrDefault(p => p.Name == PatientName);
-
-            // conditional to check if the patient was found
-            if (Patient != null)
-            {
-
-                Console.WriteLine($"Patient found: Name: {Patient.Name}, Age: {Patient.Age}, Symptoms: {Patient.Sintomas}");
-                Console.ReadKey();
-            }
-            else
-            {
-                Console.WriteLine("Patient not found.");
-            }
-        }
-        // catch any exception that may occur
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occurred while Seach patients. {ex.Message}");
-            throw;
-        }
-
+        return Patients.FirstOrDefault(p => 
+            p.Name.Equals(patientName, StringComparison.OrdinalIgnoreCase));
     }
-
-
 }
