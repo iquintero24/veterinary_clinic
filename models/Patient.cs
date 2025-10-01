@@ -55,12 +55,5 @@ namespace models
             }
         }
 
-        /// <summary>
-        /// Secure method to update the phone number
-        /// </summary>
-        public void UpdateTelefono(string newTelefono)
-        {
-            _telefono = newTelefono;
-        }
     }
 }
