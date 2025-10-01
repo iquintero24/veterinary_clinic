@@ -10,13 +10,13 @@ public class patientService
     /// <summary>
     /// Internal list that stores all registered patients.
     /// </summary>
-    private List<Patient> Patients = new List<Patient>();
+    private List<Owner> Patients = new List<Owner>();
 
     /// <summary>
     /// Registers a new patient into the system.
     /// </summary>
     /// <param name="patient">The patient object to be added.</param>
-    public void RegisterPatient(Patient patient)
+    public void RegisterPatient(Owner patient)
     {
         Patients.Add(patient);
     }
@@ -25,7 +25,7 @@ public class patientService
     /// Retrieves all registered patients.
     /// </summary>
     /// <returns>A list containing all patients.</returns>
-    public List<Patient> GetAllPatients()
+    public List<Owner> GetAllPatients()
     {
         return Patients;
     }
@@ -37,7 +37,7 @@ public class patientService
     /// <returns>
     /// The patient object if found; otherwise, null.
     /// </returns>
-    public Patient? SearchPatientsByName(string patientName)
+    public Owner? SearchPatientsByName(string patientName)
     {
         return Patients.FirstOrDefault(p => 
             p.Name.Equals(patientName, StringComparison.OrdinalIgnoreCase));

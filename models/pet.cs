@@ -3,38 +3,19 @@ namespace models
     /// <summary>
     /// Class representing a pet in the clinic system
     /// </summary>
-    public class Pet
+    public class Pet : Animal
     {
         // Unique identifier for the pet
-        public Guid Id { get; set; } = Guid.NewGuid();
-
-        // Pet's name
-        public string Name { get; set; }
-
-        // Pet's age in years
-        public int Age { get; set; }
-
-        // Type of pet (dog, cat, etc.)
-        public string Species { get; set; }
-
-        // Breed of the pet
         public string Breed { get; set; }
 
-        // Pet's weight in kilograms
-        public double Weight { get; set; }
-
         // Relationship: each pet belongs to a patient (the owner)
-        public Patient Owner { get; set; }
+        public Owner Owner { get; set; }
 
         // Constructor to initialize a new pet
-        public Pet(string name, int age, string species, string breed, double weight, Patient owner)
+        public Pet(string name, int age, string species, string breed, double weight, Owner owner): base(name, age, species)
         {
-            Id = Guid.NewGuid(); // generate unique identifier for the pet
-            Name = name;         // assign pet's name
-            Age = age;           // assign pet's age
-            Species = species;   // assign pet's species
+
             Breed = breed;       // assign pet's breed
-            Weight = weight;     // assign pet's weight
             Owner = owner;       // assign pet's owner
 
             // Ensure the pet is added to the owner's list of pets
@@ -44,10 +25,32 @@ namespace models
         /// <summary>
         /// Method to display pet information including owner
         /// </summary>
-        public void mostrarInfo()
+        public void MostrarInfo()
         {
-            Console.WriteLine($"Pet: {Name}, Species: {Species}, Breed: {Breed}, Age: {Age}, Weight: {Weight}kg");
+            Console.WriteLine($"Pet: {Name}, Species: {Species}, Breed: {Breed}, Age: {Age}");
             Console.WriteLine($"Owner: {Owner?.Name}, Owner Age: {Owner?.Age}");
+        }
+
+        public override void emitSound()
+        {
+             switch (Species.ToLower())
+            {
+                case "perro":
+                    Console.WriteLine($"{Name} dice: Guau 🐶");
+                    break;
+                case "gato":
+                    Console.WriteLine($"{Name} dice: Miau 🐱");
+                    break;
+                case "ave":
+                    Console.WriteLine($"{Name} dice: Pío 🐦");
+                    break;
+                case "conejo":
+                    Console.WriteLine($"{Name} dice: Sniff 🐰");
+                    break;
+                default:
+                    Console.WriteLine($"{Name} hace un sonido desconocido.");
+                    break;
+            }
         }
     }
 }

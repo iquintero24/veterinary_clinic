@@ -29,14 +29,14 @@ namespace ClinicaSalud
         }
 
         // Listar mascotas de un paciente
-        public void ListPets(Patient owner)
+        public void ListPets(Owner owner)
         {
             if (owner.Pets.Count > 0)
             {
                 Console.WriteLine($"Pets of {owner.Name}:");
                 foreach (var pet in owner.Pets)
                 {
-                    pet.mostrarInfo();
+                    pet.MostrarInfo();
                 }
             }
             else
@@ -46,7 +46,7 @@ namespace ClinicaSalud
         }
 
         // Buscar mascota por nombre en un dueño específico
-        public Pet? SearchPetByName(Patient owner, string petName)
+        public Pet? SearchPetByName(Owner owner, string petName)
         {
             return owner.Pets.FirstOrDefault(p =>
                 p.Name.Equals(petName, StringComparison.OrdinalIgnoreCase));

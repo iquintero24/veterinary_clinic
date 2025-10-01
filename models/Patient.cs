@@ -1,52 +1,66 @@
-namespace models;
-
-/// <summary>
-/// Class representing a patient in the health clinic system
-/// </summary>
-public class Patient
+namespace models
 {
-    // Unique patient identifier
-    public Guid Id { get; set; } = Guid.NewGuid();
-
-    // Patient's name
-    public string Name { get; set; }
-
-    // Patient's age
-    public int Age { get; set; }
-
-    // Patient's symptoms
-    public string Sintomas { get; set; }
-
-    // List of pets owned by this patient
-    public List<Pet> Pets { get; set; } = new List<Pet>();
-
-    // Constructor to initialize a new patient
-    public Patient(string name, int age, string sintomas)
-    {
-        Id = Guid.NewGuid(); // generate a new unique identifier
-        Name = name;
-        Age = age;
-        Sintomas = sintomas;
-    }
-
     /// <summary>
-    /// Method to display patient information
+    /// Class representing a patient in the health clinic system
     /// </summary>
-    public void mostrarInfo()
+    public class Owner
     {
-        Console.WriteLine($"ID: {Id}, Name: {Name}, Age: {Age}, Symptoms: {Sintomas}");
+        // Unique patient identifier (read-only from outside)
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
-        if (Pets.Count > 0)
+        // Patient's name
+        public string Name { get; set; }
+
+        // Patient's age
+        public int Age { get; set; }
+
+        // 🔒 Phone number (sensitive data → encapsulated)
+        private string _telefono;
+        public string Telefono
         {
-            Console.WriteLine("Pets:");
-            foreach (var pet in Pets)
+            get => _telefono;   // can be read from outside
+            private set => _telefono = value; // can only be modified inside the class
+        }
+
+        // List of pets owned by the patient
+        public List<Pet> Pets { get; private set; } = new List<Pet>();
+
+        // Constructor
+        public Owner(string name, int age, string telefono)
+        {
+            Id = Guid.NewGuid();
+            Name = name;
+            Age = age;
+            _telefono = telefono; // assign directly to the private field
+        }
+
+        /// <summary>
+        /// Method to display patient information
+        /// </summary>
+        public void MostrarInfo()
+        {
+            Console.WriteLine($"ID: {Id}, Name: {Name}, Age: {Age}, Phone: {Telefono}");
+
+            if (Pets.Count > 0)
             {
-                Console.WriteLine($"  - {pet.Name}, Species: {pet.Species}, Breed: {pet.Breed}, Age: {pet.Age}");
+                Console.WriteLine("Pets:");
+                foreach (var pet in Pets)
+                {
+                    Console.WriteLine($"  - {pet.Name}, Species: {pet.Species}, Breed: {pet.Breed}, Age: {pet.Age}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No pets registered for this patient.");
             }
         }
-        else
+
+        /// <summary>
+        /// Secure method to update the phone number
+        /// </summary>
+        public void UpdateTelefono(string newTelefono)
         {
-            Console.WriteLine("No pets registered for this patient.");
+            _telefono = newTelefono;
         }
     }
 }

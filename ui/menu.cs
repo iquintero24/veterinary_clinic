@@ -12,11 +12,11 @@ namespace ClinicaSalud.ui
             {
                 Console.Clear();
                 Console.WriteLine("Health Clinic Menu");
-                Console.WriteLine("1. Register Patient");
+                Console.WriteLine("1. Register Owner");
                 Console.WriteLine("2. List Patients");
-                Console.WriteLine("3. Search Patient by Name");
+                Console.WriteLine("3. Search Owner by Name");
                 Console.WriteLine("4. Register Pet");
-                Console.WriteLine("5. List Pets of a Patient");
+                Console.WriteLine("5. List Pets of a Owner");
                 Console.WriteLine("6. Search Pet by Name");
                 Console.WriteLine("7. Exit");
                 Console.Write("Select an option: ");
@@ -79,10 +79,10 @@ namespace ClinicaSalud.ui
             Console.Write("Enter patient's symptoms: ");
             string sintomas = Console.ReadLine() ?? "";
 
-            var newPatient = new models.Patient(name, age, sintomas);
+            var newPatient = new models.Owner(name, age, sintomas);
             patientService.RegisterPatient(newPatient);
 
-            Console.WriteLine("Patient registered successfully.");
+            Console.WriteLine("Owner registered successfully.");
             Console.ReadKey();
         }
 
@@ -94,7 +94,7 @@ namespace ClinicaSalud.ui
                 Console.WriteLine("\nRegistered Patients:");
                 foreach (var p in patients)
                 {
-                    p.mostrarInfo();
+                    p.MostrarInfo();
                 }
             }
             else
@@ -109,8 +109,8 @@ namespace ClinicaSalud.ui
             Console.Write("Enter the patient's name: ");
             string name = Console.ReadLine() ?? "";
             var found = patientService.SearchPatientsByName(name);
-            if (found != null) found.mostrarInfo();
-            else Console.WriteLine("Patient not found.");
+            if (found != null) found.MostrarInfo();
+            else Console.WriteLine("Owner not found.");
             Console.ReadKey();
         }
 
@@ -122,7 +122,7 @@ namespace ClinicaSalud.ui
 
             if (owner == null)
             {
-                Console.WriteLine("Patient not found. Cannot register pet.");
+                Console.WriteLine("Owner not found. Cannot register pet.");
                 Console.ReadKey();
                 return;
             }
@@ -155,7 +155,7 @@ namespace ClinicaSalud.ui
             var owner = patientService.SearchPatientsByName(ownerName);
 
             if (owner != null) petService.ListPets(owner);
-            else Console.WriteLine("Patient not found.");
+            else Console.WriteLine("Owner not found.");
             Console.ReadKey();
         }
 
@@ -167,7 +167,7 @@ namespace ClinicaSalud.ui
 
             if (owner == null)
             {
-                Console.WriteLine("Patient not found.");
+                Console.WriteLine("Owner not found.");
                 Console.ReadKey();
                 return;
             }
@@ -176,7 +176,7 @@ namespace ClinicaSalud.ui
             string petName = Console.ReadLine() ?? "";
             var pet = petService.SearchPetByName(owner, petName);
 
-            if (pet != null) pet.mostrarInfo();
+            if (pet != null) pet.MostrarInfo();
             else Console.WriteLine("Pet not found.");
             Console.ReadKey();
         }
