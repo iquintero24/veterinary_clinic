@@ -1,11 +1,12 @@
 
 using models;
+using Interface;
 
 /// <summary>
 /// Service class responsible for managing patients in memory.
 /// Provides operations to register, retrieve and search patients.
 /// </summary>
-public class patientService
+public class patientService : IRegistrable<Owner>, INotificable
 {
     /// <summary>
     /// Internal list that stores all registered patients.
@@ -16,10 +17,11 @@ public class patientService
     /// Registers a new patient into the system.
     /// </summary>
     /// <param name="patient">The patient object to be added.</param>
-    public void RegisterPatient(Owner patient)
+    public void Register(Owner patient)
     {
         Patients.Add(patient);
     }
+    
 
     /// <summary>
     /// Retrieves all registered patients.
@@ -39,7 +41,12 @@ public class patientService
     /// </returns>
     public Owner? SearchPatientsByName(string patientName)
     {
-        return Patients.FirstOrDefault(p => 
+        return Patients.FirstOrDefault(p =>
             p.Name.Equals(patientName, StringComparison.OrdinalIgnoreCase));
+    }
+
+    public void Notify()
+    {
+        Console.WriteLine("Recording the citation in the patient's agenda...");  
     }
 }

@@ -76,11 +76,11 @@ namespace ClinicaSalud.ui
                 Console.WriteLine("Invalid age. Please enter a valid number.");
             }
 
-            Console.Write("Enter patient's symptoms: ");
-            string sintomas = Console.ReadLine() ?? "";
+            Console.Write("Enter patient's telefono : ");
+            string telefono = Console.ReadLine() ?? "";
 
-            var newPatient = new models.Owner(name, age, sintomas);
-            patientService.RegisterPatient(newPatient);
+            var newPatient = new models.Owner(name, age, telefono);
+            patientService.Register(newPatient);
 
             Console.WriteLine("Owner registered successfully.");
             Console.ReadKey();
@@ -139,11 +139,8 @@ namespace ClinicaSalud.ui
             Console.Write("Enter breed: ");
             string breed = Console.ReadLine() ?? "";
 
-            Console.Write("Enter weight (kg): ");
-            double weight = double.Parse(Console.ReadLine() ?? "0");
-
-            var newPet = new models.Pet(petName, petAge, species, breed, weight, owner);
-            petService.RegisterPet(newPet);
+            var newPet = new models.Pet(petName, petAge, species, breed, owner);
+            petService.Register(newPet);
 
             Console.ReadKey();
         }

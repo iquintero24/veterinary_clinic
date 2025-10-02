@@ -1,13 +1,14 @@
 using models;
+using Interface;
 
 namespace ClinicaSalud
 {
-    public class PetService
+    public class PetService: IRegistrable<Pet>
     {
         private List<Pet> Pets = new List<Pet>();
 
         // Registrar mascota y asociarla al dueño
-        public void RegisterPet(Pet pet)
+        public void Register(Pet pet)
         {
             // Evitar registrar duplicados por Id
             if (!Pets.Any(p => p.Id == pet.Id))

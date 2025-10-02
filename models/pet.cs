@@ -12,7 +12,7 @@ namespace models
         public Owner Owner { get; set; }
 
         // Constructor to initialize a new pet
-        public Pet(string name, int age, string species, string breed, double weight, Owner owner): base(name, age, species)
+        public Pet(string name, int age, string species, string breed, Owner owner): base(name, age, species)
         {
 
             Breed = breed;       // assign pet's breed
