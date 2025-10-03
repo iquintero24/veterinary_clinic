@@ -1,7 +1,7 @@
 using models;
 using Interface;
 
-namespace ClinicaSalud
+namespace Service
 {
     public class PetService: IRegistrable<Pet>
     {

@@ -1,6 +1,6 @@
 namespace models;
 
-public class ConsultaGeneral : VeterinaryService
+public class GeneralConsultation : VeterinaryService
 {
     public override void attend()
     {

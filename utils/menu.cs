@@ -1,9 +1,15 @@
-namespace ClinicaSalud.ui
+using models;
+using Service;
+namespace utils
+
 {
     public class Menu
     {
         private patientService patientService = new patientService();
         private PetService petService = new PetService();
+
+        private VeterinarianService vetService = new VeterinarianService();
+
         private Validations validations = new Validations();
 
         public void MostrarMenu()
@@ -18,7 +24,10 @@ namespace ClinicaSalud.ui
                 Console.WriteLine("4. Register Pet");
                 Console.WriteLine("5. List Pets of a Owner");
                 Console.WriteLine("6. Search Pet by Name");
-                Console.WriteLine("7. Exit");
+                Console.WriteLine("7. Create Veterinarian");
+                Console.WriteLine("8. List Veterinarians");
+                Console.WriteLine("9. Agendar Appointment");
+                Console.WriteLine("10. Exit");
                 Console.Write("Select an option: ");
                 string opcion = Console.ReadLine() ?? "";
 
@@ -43,6 +52,13 @@ namespace ClinicaSalud.ui
                         BuscarMascota();
                         break;
                     case "7":
+                        CrearVeterinario();
+                        break;
+                    case "8":
+                        ListarVeterinarios();
+                        break;
+
+                    case "9":
                         Console.WriteLine("Leaving...");
                         return;
                     default:
@@ -177,5 +193,52 @@ namespace ClinicaSalud.ui
             else Console.WriteLine("Pet not found.");
             Console.ReadKey();
         }
+
+        private void CrearVeterinario()
+        {
+            Console.WriteLine("Register veterinarian.");
+
+            string name;
+            while (true)
+            {
+                Console.Write("Enter veterinarian's name: ");
+                name = Console.ReadLine() ?? "";
+                if (validations.ValidateName(name)) break;
+                Console.WriteLine("Invalid name. Please enter a valid name.");
+            }
+
+
+            Console.Write("Enter veterinarian's specialty: ");
+            string specialty = Console.ReadLine() ?? "";
+
+            var newVet = new Veterinarian(name, specialty);
+            vetService.Register(newVet);
+
+
+            // Aquí podrías agregar el veterinario a una lista si tienes un servicio para eso
+
+            Console.WriteLine("Veterinarian registered successfully.");
+            Console.ReadKey();
+        }
+
+        private void ListarVeterinarios()
+        {
+            var vets = vetService.GetAllVeterinarians();
+            if (vets.Count > 0)
+            {
+                Console.WriteLine("\nRegistered Veterinarians:");
+                foreach (var v in vets)
+                {
+                    Console.WriteLine($"ID: {v.Id}, Name: {v.Name}, Specialty: {v.Specialty}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No veterinarians registered.");
+            }
+            Console.ReadKey();
+        }
+        
+
     }
 }
