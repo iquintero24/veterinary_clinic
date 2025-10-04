@@ -5,6 +5,7 @@ public class Agenda
     public Guid Id { get; set; } = Guid.NewGuid();
     public List<Cita> Citas { get; set; } = new List<Cita>();
 
+    
 
     public void ListarCitas()
     {

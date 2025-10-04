@@ -1,18 +1,13 @@
+using System.Data.Common;
+
 namespace models
 {
     /// <summary>
     /// Class representing a patient in the health clinic system
     /// </summary>
-    public class Owner
+    public class Owner : Person
     {
-        // Unique patient identifier (read-only from outside)
-        public Guid Id { get; private set; } = Guid.NewGuid();
 
-        // Patient's name
-        public string Name { get; set; }
-
-        // Patient's age
-        public int Age { get; set; }
 
         // 🔒 Phone number (sensitive data → encapsulated)
         private string _telefono;
@@ -26,9 +21,8 @@ namespace models
         public List<Pet> Pets { get; private set; } = new List<Pet>();
 
         // Constructor
-        public Owner(string name, int age, string telefono)
+        public Owner(string name, int age, string telefono) : base(name, age)
         {
-            Id = Guid.NewGuid();
             Name = name;
             Age = age;
             _telefono = telefono; // assign directly to the private field
@@ -37,21 +31,16 @@ namespace models
         /// <summary>
         /// Method to display patient information
         /// </summary>
-        public void MostrarInfo()
+        public override void MostrarInfo()
         {
-            Console.WriteLine($"ID: {Id}, Name: {Name}, Age: {Age}, Phone: {Telefono}");
-
-            if (Pets.Count > 0)
+            Console.WriteLine($"Owner ID: {Id}");
+            Console.WriteLine($"Name: {Name}");
+            Console.WriteLine($"Age: {Age}");
+            Console.WriteLine($"Phone: {_telefono}");
+            Console.WriteLine("Pets:");
+            foreach (var pet in Pets)
             {
-                Console.WriteLine("Pets:");
-                foreach (var pet in Pets)
-                {
-                    Console.WriteLine($"  - {pet.Name}, Species: {pet.Species}, Breed: {pet.Breed}, Age: {pet.Age}");
-                }
-            }
-            else
-            {
-                Console.WriteLine("No pets registered for this patient.");
+                Console.WriteLine($" - {pet.Name} ({pet.Species}, {pet.Breed}, Age: {pet.Age})");
             }
         }
 

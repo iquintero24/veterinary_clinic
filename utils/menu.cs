@@ -207,11 +207,19 @@ namespace utils
                 Console.WriteLine("Invalid name. Please enter a valid name.");
             }
 
+            int age;
+            while (true)
+            {
+                Console.Write("Enter veterinarian's age: ");
+                string inputAge = Console.ReadLine() ?? "";
+                if (int.TryParse(inputAge, out age) && validations.ValidationEdad(age)) break;
+                Console.WriteLine("Invalid age. Please enter a valid number.");
+            }
 
             Console.Write("Enter veterinarian's specialty: ");
             string specialty = Console.ReadLine() ?? "";
 
-            var newVet = new Veterinarian(name, specialty);
+            var newVet = new Veterinarian(name, age, specialty);
             vetService.Register(newVet);
 
 
@@ -238,7 +246,13 @@ namespace utils
             }
             Console.ReadKey();
         }
-        
+
+        private void AgendarCita()
+        {
+            Console.WriteLine("Enter the veterinariant name: ");
+            string vetName = Console.ReadLine() ?? "";
+            var vet = vetService.SearchVeterinarianByName(vetName);
+        }
 
     }
 }
