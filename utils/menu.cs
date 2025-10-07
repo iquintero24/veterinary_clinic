@@ -1,19 +1,42 @@
+using Interface;
 using models;
+using Repositories;
 using Service;
 namespace utils
 
 {
     public class Menu
     {
-        private patientService patientService = new patientService();
+        // instaciamos los reposiorios necesarios para la inyeccion de dependecias:
+
+        // owner Repository y service: 
+        private readonly IOwnerRepository ownerRepository; // repositorio (Manejo de datos)
+        private readonly patientService patientService; // servicio (Logica de negocio)
+
+        // se agregaran aca los demas  instacias:
+
+
+        //
+
         private PetService petService = new PetService();
 
         private VeterinarianService vetService = new VeterinarianService();
 
-        private Validations validations = new Validations();
+        // constructor: aqui creeamos las instacias necesarias: 
+        public Menu()
+        {
+            // 🔹 Inyección manual de dependencias (creamos las instancias nosotros)
+            ownerRepository = new OwnerRepositories();
+            patientService = new patientService(ownerRepository);
+        }
+
 
         public void MostrarMenu()
         {
+            // Manualmente inyectamos las dependencias:
+
+
+
             while (true)
             {
                 Console.Clear();
@@ -79,7 +102,7 @@ namespace utils
             {
                 Console.Write("Enter patient's name: ");
                 name = Console.ReadLine() ?? "";
-                if (validations.ValidateName(name)) break;
+                if (Validations.ValidateName(name)) break;
                 Console.WriteLine("Invalid name. Please enter a valid name.");
             }
 
@@ -88,7 +111,7 @@ namespace utils
             {
                 Console.Write("Enter patient's age: ");
                 string inputAge = Console.ReadLine() ?? "";
-                if (int.TryParse(inputAge, out age) && validations.ValidationEdad(age)) break;
+                if (int.TryParse(inputAge, out age) && Validations.ValidationEdad(age)) break;
                 Console.WriteLine("Invalid age. Please enter a valid number.");
             }
 
@@ -104,7 +127,7 @@ namespace utils
 
         private void ListarPacientes()
         {
-            var patients = patientService.GetAllPatients();
+            var patients = patientService.GetAllOwners();
             if (patients.Count > 0)
             {
                 Console.WriteLine("\nRegistered Patients:");
@@ -124,74 +147,119 @@ namespace utils
         {
             Console.Write("Enter the patient's name: ");
             string name = Console.ReadLine() ?? "";
-            var found = patientService.SearchPatientsByName(name);
+            var found = patientService.GetOwnerByname(name);
             if (found != null) found.MostrarInfo();
             else Console.WriteLine("Owner not found.");
             Console.ReadKey();
         }
 
+
         private void RegistrarMascota()
         {
             Console.Write("Enter the patient's name (owner): ");
             string ownerName = Console.ReadLine() ?? "";
-            var owner = patientService.SearchPatientsByName(ownerName);
-
-            if (owner == null)
+            // TODO: VALIDAR EL NOMBRE DEL OWNER [x]:
+            if (Validations.ValidateName(ownerName))
             {
-                Console.WriteLine("Owner not found. Cannot register pet.");
+                var owner = patientService.GetOwnerByname(ownerName);
+                // valida si encontro el owner:
+
+                if (owner == null)
+                {
+                    // en caso de no encontrarlo:
+                    Console.WriteLine("Owner not found. Cannot register pet.");
+                    Console.ReadKey();
+                    return;
+                }
+                // sigue el flujo de el metodo: 
+
+                Console.Write("Enter pet's name: ");
+                string petName = Console.ReadLine() ?? "";
+
+                Console.Write("Enter pet's age: ");
+                int petAge = int.Parse(Console.ReadLine() ?? "0");
+
+                Console.Write("Enter species (dog, cat, etc.): ");
+                string species = Console.ReadLine() ?? "";
+
+                Console.Write("Enter breed: ");
+                string breed = Console.ReadLine() ?? "";
+
+                // creacion del objeto pet
+                var newPet = new models.Pet(petName, petAge, species, breed, owner);
+                petService.Register(newPet);
+
                 Console.ReadKey();
+            }
+            // en caso de no encontrar el owner;    
+            else
+            {
+                Console.WriteLine("Owner is invalide.");
                 return;
             }
-
-            Console.Write("Enter pet's name: ");
-            string petName = Console.ReadLine() ?? "";
-
-            Console.Write("Enter pet's age: ");
-            int petAge = int.Parse(Console.ReadLine() ?? "0");
-
-            Console.Write("Enter species (dog, cat, etc.): ");
-            string species = Console.ReadLine() ?? "";
-
-            Console.Write("Enter breed: ");
-            string breed = Console.ReadLine() ?? "";
-
-            var newPet = new models.Pet(petName, petAge, species, breed, owner);
-            petService.Register(newPet);
-
-            Console.ReadKey();
         }
 
         private void ListarMascotas()
         {
             Console.Write("Enter the patient's name: ");
             string ownerName = Console.ReadLine() ?? "";
-            var owner = patientService.SearchPatientsByName(ownerName);
+            // TODO: VALIDAR EL NOMBRE DEL OWNER [x]:
+            if (Validations.ValidateName(ownerName))
+            {
+                var owner = patientService.GetOwnerByname(ownerName);
 
-            if (owner != null) petService.ListPets(owner);
-            else Console.WriteLine("Owner not found.");
-            Console.ReadKey();
+                // valida si encontro el owner:
+                if (owner != null) petService.ListPets(owner);
+                else Console.WriteLine("Owner not found.");
+                // sigue el flujo de el metodo:
+                Console.ReadKey();
+            }
+            // en caso de no encontrar el owner;            
+            else
+            {
+                Console.WriteLine("Owner is invalide.");
+                return;
+            }
+
         }
 
         private void BuscarMascota()
         {
             Console.Write("Enter the patient's name: ");
             string ownerName = Console.ReadLine() ?? "";
-            var owner = patientService.SearchPatientsByName(ownerName);
-
-            if (owner == null)
+            // TODO: VALIDAR EL NOMBRE DEL OWNER [x]:
+            if (Validations.ValidateName(ownerName))
             {
-                Console.WriteLine("Owner not found.");
+                var owner = patientService.GetOwnerByname(ownerName);
+                // valida si encontro el owner:
+                if (owner == null)
+                {   // en caso de no encontrarlo:
+                    Console.WriteLine("Owner not found.");
+                    Console.ReadKey();
+                    return;
+                }
+                // sigue el flujo de el metodo:
+                Console.Write("Enter the pet's name: ");
+
+                // pedir el nombre de la mascota: 
+                string petName = Console.ReadLine() ?? "";
+                var pet = petService.SearchPetByName(owner, petName);
+                // condicional ternario: 
+                if (pet != null) pet.MostrarInfo();
+                else Console.WriteLine("Pet not found.");
                 Console.ReadKey();
+            }
+            // en caso de no encontrar el owner;            
+            else
+            {
+                Console.WriteLine("Owner is invalide.");
                 return;
             }
 
-            Console.Write("Enter the pet's name: ");
-            string petName = Console.ReadLine() ?? "";
-            var pet = petService.SearchPetByName(owner, petName);
 
-            if (pet != null) pet.MostrarInfo();
-            else Console.WriteLine("Pet not found.");
-            Console.ReadKey();
+
+
+
         }
 
         private void CrearVeterinario()
@@ -203,7 +271,7 @@ namespace utils
             {
                 Console.Write("Enter veterinarian's name: ");
                 name = Console.ReadLine() ?? "";
-                if (validations.ValidateName(name)) break;
+                if (Validations.ValidateName(name)) break;
                 Console.WriteLine("Invalid name. Please enter a valid name.");
             }
 
@@ -212,7 +280,7 @@ namespace utils
             {
                 Console.Write("Enter veterinarian's age: ");
                 string inputAge = Console.ReadLine() ?? "";
-                if (int.TryParse(inputAge, out age) && validations.ValidationEdad(age)) break;
+                if (int.TryParse(inputAge, out age) && Validations.ValidationEdad(age)) break;
                 Console.WriteLine("Invalid age. Please enter a valid number.");
             }
 

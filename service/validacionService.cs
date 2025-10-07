@@ -7,7 +7,7 @@ public class Validations
     /// </summary>
     /// <param name="age"></param>
     /// <returns></returns>
-    public bool ValidationEdad(int age)
+    public static bool ValidationEdad(int age)
     {
         if (age > 0)
         {
@@ -25,7 +25,7 @@ public class Validations
     /// <param name="name"></param>
     /// <returns></returns>
 
-    public bool ValidateName(string name )
+    public static bool ValidateName(string name )
     {
         if (string.IsNullOrEmpty(name))
         {
