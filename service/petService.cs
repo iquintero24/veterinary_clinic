@@ -1,32 +1,54 @@
 using models;
 using Interface;
+using Repositories;
 
 namespace Service
 {
-    public class PetService: IRegistrable<Pet>
+    public class PetService : IRegistrable<Pet>
     {
-        private List<Pet> Pets = new List<Pet>();
+        // 📦 Dependencia: el servicio necesita un repositorio para funcionar(se instacia una dependencia)
+        private readonly IPetRepository _petRepository;
+
+        // se instacia el constructor para crear la injection de dependencias que se necesita()
+        public PetService(IPetRepository petRepository)
+        {
+            _petRepository = petRepository;
+        }
+
+        // 🔹 Constructor por defecto (usa repositorio concreto si no se pasa ninguno)
+        public PetService() : this(new PetRepository())
+        {
+
+        }
 
         // Registrar mascota y asociarla al dueño
         public void Register(Pet pet)
         {
-            // Evitar registrar duplicados por Id
-            if (!Pets.Any(p => p.Id == pet.Id))
+            // validar que el objeto no sea null 
+            if (pet == null)
             {
-                Pets.Add(pet);
-
-                // Si el dueño no la tiene en su lista, la agregamos
-                if (pet.Owner != null && !pet.Owner.Pets.Any(p => p.Id == pet.Id))
-                {
-                    pet.Owner.Pets.Add(pet);
-                }
-
-                Console.WriteLine($"Pet '{pet.Name}' registered successfully!");
+                Console.WriteLine("Pet a register is null");
+                return;
             }
-            else
+
+            // buscar si ya existe un perro con ese nombre
+            var existPet = _petRepository.GetByName(pet.Name);
+            if (existPet != null)
             {
-                Console.WriteLine("This pet is already registered.");
+                Console.WriteLine("Pet Exist in de database");
+                return;
             }
+
+            _petRepository.create(pet);
+
+            // si tiene owner agregarla a su lista de mascotas:
+
+            if (pet.Owner != null && !pet.Owner.Pets.Any(p => p.Id == pet.Id))
+            {
+                // esto podriamos crear un metodo en el repositorio para que el servicio no pueda modificar esto directamente
+                _petRepository.AddPetToOwner(pet);
+            }
+
         }
 
         // Listar mascotas de un paciente
@@ -56,7 +78,7 @@ namespace Service
         // Obtener todas las mascotas de la clínica
         public List<Pet> GetAllPets()
         {
-            return Pets;
+            return _petRepository.GetAll();
         }
     }
 }

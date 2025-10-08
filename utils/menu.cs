@@ -9,25 +9,22 @@ namespace utils
     {
         // instaciamos los reposiorios necesarios para la inyeccion de dependecias:
 
-        // owner Repository y service: 
-        private readonly IOwnerRepository ownerRepository; // repositorio (Manejo de datos)
+        // service: 
         private readonly patientService patientService; // servicio (Logica de negocio)
+        private readonly VeterinarianService veterinarianService;
 
         // se agregaran aca los demas  instacias:
 
 
-        //
 
         private PetService petService = new PetService();
 
-        private VeterinarianService vetService = new VeterinarianService();
 
         // constructor: aqui creeamos las instacias necesarias: 
         public Menu()
         {
-            // 🔹 Inyección manual de dependencias (creamos las instancias nosotros)
-            ownerRepository = new OwnerRepositories();
-            patientService = new patientService(ownerRepository);
+            patientService = new patientService();
+            veterinarianService = new VeterinarianService();
         }
 
 
@@ -288,7 +285,7 @@ namespace utils
             string specialty = Console.ReadLine() ?? "";
 
             var newVet = new Veterinarian(name, age, specialty);
-            vetService.Register(newVet);
+            veterinarianService.Register(newVet);
 
 
             // Aquí podrías agregar el veterinario a una lista si tienes un servicio para eso
@@ -299,7 +296,7 @@ namespace utils
 
         private void ListarVeterinarios()
         {
-            var vets = vetService.GetAllVeterinarians();
+            var vets = veterinarianService.GetAllVeterinarians();
             if (vets.Count > 0)
             {
                 Console.WriteLine("\nRegistered Veterinarians:");
@@ -319,7 +316,7 @@ namespace utils
         {
             Console.WriteLine("Enter the veterinariant name: ");
             string vetName = Console.ReadLine() ?? "";
-            var vet = vetService.SearchVeterinarianByName(vetName);
+            var vet = veterinarianService.SearchVeterinarianByName(vetName);
         }
 
     }

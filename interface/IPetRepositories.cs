@@ -4,9 +4,10 @@ using models;
 
 namespace Interface;
 
-public interface IOwnerReposiroty : ICrudRepository<Owner>
+public interface IPetRepository : ICrudRepository<Pet>
 {
     // Aca van las consultas que no son CRUD:
     // Vacio por el momento
 
+    void AddPetToOwner(Pet pet);
 }

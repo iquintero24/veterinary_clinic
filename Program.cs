@@ -1,4 +1,5 @@
-﻿using models;
+﻿using ClinicaSalud.data;
+using models;
 
 var menu = new utils.Menu();
 menu.MostrarMenu();
@@ -18,3 +19,4 @@ Console.WriteLine("Veterinario Details:");
 veterinario.MostrarInfo();
 Console.WriteLine("Citas del Veterinario:");
 veterinario.Agenda.ListarCitas();*/
+
