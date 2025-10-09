@@ -44,4 +44,26 @@ public class PetRepository : IPetRepository
         pet.Owner.Pets.Add(pet);
     }
 
+    /// <summary>
+    /// List Pets by Owner.
+    /// </summary>
+    /// <param name="owner"></param>
+    /// <returns></returns>
+    public List<Pet> GetPetsByOwner(Owner owner)
+    {
+        return owner.Pets;
+    }
+
+    /// <summary>
+    /// search Pet By name in owner
+    /// </summary>
+    /// <param name="owner"></param>
+    /// <param name="petName"></param>
+    /// <returns></returns>
+    public Pet? SearchPetByName(Owner owner, string petName)
+    {
+        return owner.Pets.FirstOrDefault(p =>
+               p.Name.Equals(petName, StringComparison.OrdinalIgnoreCase));
+    }
+
 }

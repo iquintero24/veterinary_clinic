@@ -69,7 +69,7 @@ public class VeterinarianService : IRegistrable<Veterinarian>
         {
             // debes de devolver un msg al usuario donde notifiques que se encontro el paciente con ese nombre:
             // msg type success:
-            Console.WriteLine($"No se encontro ningun dueño con ese nombre {veterinarian.Name}");
+            Console.WriteLine($"se encontro un veterinario con ese  nombre {veterinarian.Name}");
         }
 
         //retornamos el resultado si se encontro

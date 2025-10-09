@@ -12,12 +12,9 @@ namespace utils
         // service: 
         private readonly patientService patientService; // servicio (Logica de negocio)
         private readonly VeterinarianService veterinarianService;
+        private readonly PetService petService;
 
-        // se agregaran aca los demas  instacias:
-
-
-
-        private PetService petService = new PetService();
+        private readonly AgendaService agendaService;
 
 
         // constructor: aqui creeamos las instacias necesarias: 
@@ -25,12 +22,21 @@ namespace utils
         {
             patientService = new patientService();
             veterinarianService = new VeterinarianService();
+            petService = new PetService();
+            agendaService = new AgendaService();
         }
 
 
         public void MostrarMenu()
         {
-            // Manualmente inyectamos las dependencias:
+            /* Este menu necesita una resctructuracion de su funcionamiento:
+             - Debemos separar el menu por modulos
+             - example: menuAgenda:
+                que manejara todas las opciones de agendas
+                futuro esta modularidad sera mejor para no tener una sola clase con un monton de metodos y resposabilidades
+
+                - TODO: Hacer este cambio antes del viernes []        
+            */
 
 
 
@@ -77,8 +83,10 @@ namespace utils
                     case "8":
                         ListarVeterinarios();
                         break;
-
                     case "9":
+                        AgendarCita();
+                        break;
+                    case "10":
                         Console.WriteLine("Leaving...");
                         return;
                     default:
@@ -252,11 +260,6 @@ namespace utils
                 Console.WriteLine("Owner is invalide.");
                 return;
             }
-
-
-
-
-
         }
 
         private void CrearVeterinario()
@@ -314,9 +317,95 @@ namespace utils
 
         private void AgendarCita()
         {
-            Console.WriteLine("Enter the veterinariant name: ");
+            Console.WriteLine("Enter the veterinarian's name: ");
             string vetName = Console.ReadLine() ?? "";
-            var vet = veterinarianService.SearchVeterinarianByName(vetName);
+
+            // ✅ Validar nombre del veterinario
+            if (!Validations.ValidateName(vetName))
+            {
+                Console.WriteLine($"The veterinarian name '{vetName}' is invalid.");
+                return;
+            }
+
+            // ✅ Buscar veterinario
+            Veterinarian? vet = veterinarianService.SearchVeterinarianByName(vetName);
+            if (vet == null)
+            {
+                Console.WriteLine($"The veterinarian '{vetName}' was not found.");
+                return;
+            }
+
+            // ✅ Solicitar nombre de la mascota
+            Console.Write("Enter the pet's name: ");
+            string petName = Console.ReadLine() ?? "";
+
+            if (!Validations.ValidateName(petName))
+            {
+                Console.WriteLine($"The pet name '{petName}' is invalid.");
+                return;
+            }
+
+            Console.Write("Enter the owner's name: ");
+            string ownerName = Console.ReadLine() ?? "";
+
+            if (!Validations.ValidateName(ownerName))
+            {
+                Console.WriteLine($"The owner name '{ownerName}' is invalid.");
+                return;
+            }
+
+            var owner = patientService.GetOwnerByname(ownerName);
+            if (owner == null)
+            {
+                Console.WriteLine($"Owner '{ownerName}' not found.");
+                return;
+            }
+
+            // ✅ Buscar la mascota dentro del dueño
+            var pet = petService.SearchPetByName(owner, petName);
+            if (pet == null)
+            {
+                Console.WriteLine($"No pet named '{petName}' found for owner '{ownerName}'.");
+                return;
+            }
+
+            // ✅ Pedir fecha y hora
+            Console.Write("Enter appointment date (yyyy-mm-dd): ");
+            DateTime date;
+            if (!DateTime.TryParse(Console.ReadLine(), out date))
+            {
+                Console.WriteLine("Invalid date format.");
+                return;
+            }
+
+            //Pedir la razon de la cita
+            Console.Write("Enter the appointment reason: ");
+            string reason = Console.ReadLine() ?? "General checkup";
+
+            // ✅ Crear la cita
+            Cita nuevaCita = new Cita(date, reason, pet, vet);
+            // ✅ Registrar la cita usando el servicio
+            agendaService.Register(nuevaCita);
+
+            Console.WriteLine($"Appointment scheduled successfully for {pet.Name} with Dr. {vet.Name} on {date.ToShortDateString()}.");
+        }
+
+        private void GetAllAgenda()
+        {
+            var agendas = agendaService.GetAllAgenda();
+            if (agendas.Count > 0)
+            {
+                Console.WriteLine("\nRegistered Agendas:");
+                foreach (var a in agendas)
+                {
+                    Console.WriteLine($"ID: {a.Id}, : fecha: {a.Date}, reason: {a.Reason} Dr. {a.veterinario} pet: {a.pet}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No pets registered.");
+            }
+            Console.ReadKey();
         }
 
     }

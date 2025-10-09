@@ -34,5 +34,7 @@ public class OwnerRepository : IOwnerReposiroty
     {
         return DataBase.Owner.FirstOrDefault(owner => owner.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
     }
+
+    
 }
 

@@ -11,7 +11,7 @@ using Repositories;
 public class patientService : IRegistrable<Owner>, INotificable
 {
 
-    // 📦 Dependencia: el servicio necesita un repositorio para funcionar(se instacia una dependencia)
+    //  Dependencia: el servicio necesita un repositorio para funcionar(se instacia una dependencia)
     private readonly IOwnerReposiroty _ownerRepository;
 
     // se instacia el constructor para crear la injection de dependencias que se necesita()

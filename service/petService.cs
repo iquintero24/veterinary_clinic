@@ -51,34 +51,45 @@ namespace Service
 
         }
 
+        // Obtener todas las mascotas de la clínica
+        public List<Pet> GetAllPets()
+        {
+            return _petRepository.GetAll();
+        }
+
         // Listar mascotas de un paciente
         public void ListPets(Owner owner)
         {
-            if (owner.Pets.Count > 0)
+            var pets = _petRepository.GetPetsByOwner(owner);
+
+            if (pets.Any())
             {
                 Console.WriteLine($"Pets of {owner.Name}:");
-                foreach (var pet in owner.Pets)
+                foreach (var pet in pets)
                 {
                     pet.MostrarInfo();
                 }
-            }
-            else
-            {
-                Console.WriteLine("This patient has no pets registered.");
             }
         }
 
         // Buscar mascota por nombre en un dueño específico
         public Pet? SearchPetByName(Owner owner, string petName)
         {
-            return owner.Pets.FirstOrDefault(p =>
-                p.Name.Equals(petName, StringComparison.OrdinalIgnoreCase));
-        }
+            if (owner == null || string.IsNullOrWhiteSpace(petName))
+            {
+                Console.WriteLine("Invalid owner or pet name.");
+                return null;
+            }
 
-        // Obtener todas las mascotas de la clínica
-        public List<Pet> GetAllPets()
-        {
-            return _petRepository.GetAll();
+            var pet = _petRepository.SearchPetByName(owner, petName);
+
+            if (pet != null)
+            {
+                return pet;
+            }
+
+            Console.WriteLine("Pet not found for this owner.");
+            return null;
         }
     }
 }
