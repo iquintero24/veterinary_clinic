@@ -8,7 +8,6 @@ public class Veterinarian: Person
 
     public Veterinarian(string name, int age, string Specialty): base(name,age)
     {
-        Name = name;
         this.Specialty = Specialty;
     }
 
@@ -17,5 +16,6 @@ public class Veterinarian: Person
         Console.WriteLine($"Veterinarian ID: {Id}");
         Console.WriteLine($"Name: {Name}");
         Console.WriteLine($"Specialty: {Specialty}");
+    
     }
 }

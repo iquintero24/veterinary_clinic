@@ -40,6 +40,8 @@ namespace Service
             }
 
             _petRepository.create(pet);
+            Console.WriteLine("Pet create success!");
+            
 
             // si tiene owner agregarla a su lista de mascotas:
 

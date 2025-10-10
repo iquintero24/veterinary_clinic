@@ -52,7 +52,6 @@ public class AgendaService : IRegistrable<Cita>
             Console.WriteLine("The vet has no appointments.");
         }
 
-        // evitamos checks ( null )
         return vetCita ?? new List<Cita>();
     }
 

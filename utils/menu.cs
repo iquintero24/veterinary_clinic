@@ -1,412 +1,44 @@
-using Interface;
-using models;
-using Repositories;
-using Service;
+using System;
+
 namespace utils
-
 {
-    public class Menu
+    public class MainMenu
     {
-        // instaciamos los reposiorios necesarios para la inyeccion de dependecias:
+        private readonly PatientMenu _patientMenu = new PatientMenu();
+        private readonly PetMenu _petMenu = new PetMenu();
+        private readonly VetMenu _vetMenu = new VetMenu();
+        private readonly AgendaMenu _agendaMenu = new AgendaMenu();
 
-        // service: 
-        private readonly patientService patientService; // servicio (Logica de negocio)
-        private readonly VeterinarianService veterinarianService;
-        private readonly PetService petService;
-
-        private readonly AgendaService agendaService;
-
-
-        // constructor: aqui creeamos las instacias necesarias: 
-        public Menu()
+        public void MostrarMenuPrincipal()
         {
-            patientService = new patientService();
-            veterinarianService = new VeterinarianService();
-            petService = new PetService();
-            agendaService = new AgendaService();
-        }
-
-
-        public void MostrarMenu()
-        {
-            /* Este menu necesita una resctructuracion de su funcionamiento:
-             - Debemos separar el menu por modulos
-             - example: menuAgenda:
-                que manejara todas las opciones de agendas
-                futuro esta modularidad sera mejor para no tener una sola clase con un monton de metodos y resposabilidades
-
-                - TODO: Hacer este cambio antes del viernes []        
-            */
-
-
-
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("Health Clinic Menu");
-                Console.WriteLine("1. Register Owner");
-                Console.WriteLine("2. List Patients");
-                Console.WriteLine("3. Search Owner by Name");
-                Console.WriteLine("4. Register Pet");
-                Console.WriteLine("5. List Pets of a Owner");
-                Console.WriteLine("6. Search Pet by Name");
-                Console.WriteLine("7. Create Veterinarian");
-                Console.WriteLine("8. List Veterinarians");
-                Console.WriteLine("9. Agendar Appointment");
-                Console.WriteLine("10. Exit");
+                Console.WriteLine("====== 🏥 HEALTH CLINIC SYSTEM ======");
+                Console.WriteLine("1. Patients Module");
+                Console.WriteLine("2. Pets Module");
+                Console.WriteLine("3. Veterinarians Module");
+                Console.WriteLine("4. Appointments / Agenda");
+                Console.WriteLine("5. Exit");
                 Console.Write("Select an option: ");
+
                 string opcion = Console.ReadLine() ?? "";
 
                 switch (opcion)
                 {
-                    case "1":
-                        RegistrarPaciente();
-                        break;
-                    case "2":
-                        ListarPacientes();
-                        break;
-                    case "3":
-                        BuscarPaciente();
-                        break;
-                    case "4":
-                        RegistrarMascota();
-                        break;
+                    case "1": _patientMenu.MostrarMenuPaciente(); break;
+                    case "2": _petMenu.MostrarMenuMascotas(); break;
+                    case "3": _vetMenu.MostrarMenuVeterinarios(); break;
+                    case "4": _agendaMenu.MostrarMenuAgenda(); break;
                     case "5":
-                        ListarMascotas();
-                        break;
-                    case "6":
-                        BuscarMascota();
-                        break;
-                    case "7":
-                        CrearVeterinario();
-                        break;
-                    case "8":
-                        ListarVeterinarios();
-                        break;
-                    case "9":
-                        AgendarCita();
-                        break;
-                    case "10":
                         Console.WriteLine("Leaving...");
                         return;
                     default:
-                        Console.WriteLine("Invalid option, try again..");
+                        Console.WriteLine("Invalid option, press a key...");
                         Console.ReadKey();
                         break;
                 }
             }
         }
-
-        // --- Métodos privados del menú ---
-        private void RegistrarPaciente()
-        {
-            Console.WriteLine("Register patient.");
-
-            string name;
-            while (true)
-            {
-                Console.Write("Enter patient's name: ");
-                name = Console.ReadLine() ?? "";
-                if (Validations.ValidateName(name)) break;
-                Console.WriteLine("Invalid name. Please enter a valid name.");
-            }
-
-            int age;
-            while (true)
-            {
-                Console.Write("Enter patient's age: ");
-                string inputAge = Console.ReadLine() ?? "";
-                if (int.TryParse(inputAge, out age) && Validations.ValidationEdad(age)) break;
-                Console.WriteLine("Invalid age. Please enter a valid number.");
-            }
-
-            Console.Write("Enter patient's telefono : ");
-            string telefono = Console.ReadLine() ?? "";
-
-            var newPatient = new models.Owner(name, age, telefono);
-            patientService.Register(newPatient);
-
-            Console.WriteLine("Owner registered successfully.");
-            Console.ReadKey();
-        }
-
-        private void ListarPacientes()
-        {
-            var patients = patientService.GetAllOwners();
-            if (patients.Count > 0)
-            {
-                Console.WriteLine("\nRegistered Patients:");
-                foreach (var p in patients)
-                {
-                    p.MostrarInfo();
-                }
-            }
-            else
-            {
-                Console.WriteLine("No patients registered.");
-            }
-            Console.ReadKey();
-        }
-
-        private void BuscarPaciente()
-        {
-            Console.Write("Enter the patient's name: ");
-            string name = Console.ReadLine() ?? "";
-            var found = patientService.GetOwnerByname(name);
-            if (found != null) found.MostrarInfo();
-            else Console.WriteLine("Owner not found.");
-            Console.ReadKey();
-        }
-
-
-        private void RegistrarMascota()
-        {
-            Console.Write("Enter the patient's name (owner): ");
-            string ownerName = Console.ReadLine() ?? "";
-            // TODO: VALIDAR EL NOMBRE DEL OWNER [x]:
-            if (Validations.ValidateName(ownerName))
-            {
-                var owner = patientService.GetOwnerByname(ownerName);
-                // valida si encontro el owner:
-
-                if (owner == null)
-                {
-                    // en caso de no encontrarlo:
-                    Console.WriteLine("Owner not found. Cannot register pet.");
-                    Console.ReadKey();
-                    return;
-                }
-                // sigue el flujo de el metodo: 
-
-                Console.Write("Enter pet's name: ");
-                string petName = Console.ReadLine() ?? "";
-
-                Console.Write("Enter pet's age: ");
-                int petAge = int.Parse(Console.ReadLine() ?? "0");
-
-                Console.Write("Enter species (dog, cat, etc.): ");
-                string species = Console.ReadLine() ?? "";
-
-                Console.Write("Enter breed: ");
-                string breed = Console.ReadLine() ?? "";
-
-                // creacion del objeto pet
-                var newPet = new models.Pet(petName, petAge, species, breed, owner);
-                petService.Register(newPet);
-
-                Console.ReadKey();
-            }
-            // en caso de no encontrar el owner;    
-            else
-            {
-                Console.WriteLine("Owner is invalide.");
-                return;
-            }
-        }
-
-        private void ListarMascotas()
-        {
-            Console.Write("Enter the patient's name: ");
-            string ownerName = Console.ReadLine() ?? "";
-            // TODO: VALIDAR EL NOMBRE DEL OWNER [x]:
-            if (Validations.ValidateName(ownerName))
-            {
-                var owner = patientService.GetOwnerByname(ownerName);
-
-                // valida si encontro el owner:
-                if (owner != null) petService.ListPets(owner);
-                else Console.WriteLine("Owner not found.");
-                // sigue el flujo de el metodo:
-                Console.ReadKey();
-            }
-            // en caso de no encontrar el owner;            
-            else
-            {
-                Console.WriteLine("Owner is invalide.");
-                return;
-            }
-
-        }
-
-        private void BuscarMascota()
-        {
-            Console.Write("Enter the patient's name: ");
-            string ownerName = Console.ReadLine() ?? "";
-            // TODO: VALIDAR EL NOMBRE DEL OWNER [x]:
-            if (Validations.ValidateName(ownerName))
-            {
-                var owner = patientService.GetOwnerByname(ownerName);
-                // valida si encontro el owner:
-                if (owner == null)
-                {   // en caso de no encontrarlo:
-                    Console.WriteLine("Owner not found.");
-                    Console.ReadKey();
-                    return;
-                }
-                // sigue el flujo de el metodo:
-                Console.Write("Enter the pet's name: ");
-
-                // pedir el nombre de la mascota: 
-                string petName = Console.ReadLine() ?? "";
-                var pet = petService.SearchPetByName(owner, petName);
-                // condicional ternario: 
-                if (pet != null) pet.MostrarInfo();
-                else Console.WriteLine("Pet not found.");
-                Console.ReadKey();
-            }
-            // en caso de no encontrar el owner;            
-            else
-            {
-                Console.WriteLine("Owner is invalide.");
-                return;
-            }
-        }
-
-        private void CrearVeterinario()
-        {
-            Console.WriteLine("Register veterinarian.");
-
-            string name;
-            while (true)
-            {
-                Console.Write("Enter veterinarian's name: ");
-                name = Console.ReadLine() ?? "";
-                if (Validations.ValidateName(name)) break;
-                Console.WriteLine("Invalid name. Please enter a valid name.");
-            }
-
-            int age;
-            while (true)
-            {
-                Console.Write("Enter veterinarian's age: ");
-                string inputAge = Console.ReadLine() ?? "";
-                if (int.TryParse(inputAge, out age) && Validations.ValidationEdad(age)) break;
-                Console.WriteLine("Invalid age. Please enter a valid number.");
-            }
-
-            Console.Write("Enter veterinarian's specialty: ");
-            string specialty = Console.ReadLine() ?? "";
-
-            var newVet = new Veterinarian(name, age, specialty);
-            veterinarianService.Register(newVet);
-
-
-            // Aquí podrías agregar el veterinario a una lista si tienes un servicio para eso
-
-            Console.WriteLine("Veterinarian registered successfully.");
-            Console.ReadKey();
-        }
-
-        private void ListarVeterinarios()
-        {
-            var vets = veterinarianService.GetAllVeterinarians();
-            if (vets.Count > 0)
-            {
-                Console.WriteLine("\nRegistered Veterinarians:");
-                foreach (var v in vets)
-                {
-                    Console.WriteLine($"ID: {v.Id}, Name: {v.Name}, Specialty: {v.Specialty}");
-                }
-            }
-            else
-            {
-                Console.WriteLine("No veterinarians registered.");
-            }
-            Console.ReadKey();
-        }
-
-        private void AgendarCita()
-        {
-            Console.WriteLine("Enter the veterinarian's name: ");
-            string vetName = Console.ReadLine() ?? "";
-
-            // ✅ Validar nombre del veterinario
-            if (!Validations.ValidateName(vetName))
-            {
-                Console.WriteLine($"The veterinarian name '{vetName}' is invalid.");
-                return;
-            }
-
-            // ✅ Buscar veterinario
-            Veterinarian? vet = veterinarianService.SearchVeterinarianByName(vetName);
-            if (vet == null)
-            {
-                Console.WriteLine($"The veterinarian '{vetName}' was not found.");
-                return;
-            }
-
-            // ✅ Solicitar nombre de la mascota
-            Console.Write("Enter the pet's name: ");
-            string petName = Console.ReadLine() ?? "";
-
-            if (!Validations.ValidateName(petName))
-            {
-                Console.WriteLine($"The pet name '{petName}' is invalid.");
-                return;
-            }
-
-            Console.Write("Enter the owner's name: ");
-            string ownerName = Console.ReadLine() ?? "";
-
-            if (!Validations.ValidateName(ownerName))
-            {
-                Console.WriteLine($"The owner name '{ownerName}' is invalid.");
-                return;
-            }
-
-            var owner = patientService.GetOwnerByname(ownerName);
-            if (owner == null)
-            {
-                Console.WriteLine($"Owner '{ownerName}' not found.");
-                return;
-            }
-
-            // ✅ Buscar la mascota dentro del dueño
-            var pet = petService.SearchPetByName(owner, petName);
-            if (pet == null)
-            {
-                Console.WriteLine($"No pet named '{petName}' found for owner '{ownerName}'.");
-                return;
-            }
-
-            // ✅ Pedir fecha y hora
-            Console.Write("Enter appointment date (yyyy-mm-dd): ");
-            DateTime date;
-            if (!DateTime.TryParse(Console.ReadLine(), out date))
-            {
-                Console.WriteLine("Invalid date format.");
-                return;
-            }
-
-            //Pedir la razon de la cita
-            Console.Write("Enter the appointment reason: ");
-            string reason = Console.ReadLine() ?? "General checkup";
-
-            // ✅ Crear la cita
-            Cita nuevaCita = new Cita(date, reason, pet, vet);
-            // ✅ Registrar la cita usando el servicio
-            agendaService.Register(nuevaCita);
-
-            Console.WriteLine($"Appointment scheduled successfully for {pet.Name} with Dr. {vet.Name} on {date.ToShortDateString()}.");
-        }
-
-        private void GetAllAgenda()
-        {
-            var agendas = agendaService.GetAllAgenda();
-            if (agendas.Count > 0)
-            {
-                Console.WriteLine("\nRegistered Agendas:");
-                foreach (var a in agendas)
-                {
-                    Console.WriteLine($"ID: {a.Id}, : fecha: {a.Date}, reason: {a.Reason} Dr. {a.veterinario} pet: {a.pet}");
-                }
-            }
-            else
-            {
-                Console.WriteLine("No pets registered.");
-            }
-            Console.ReadKey();
-        }
-
     }
 }

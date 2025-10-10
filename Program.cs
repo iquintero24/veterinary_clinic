@@ -1,8 +1,8 @@
 ﻿using ClinicaSalud.data;
 using models;
 
-var menu = new utils.Menu();
-menu.MostrarMenu();
+var menu = new utils.MainMenu();
+menu.MostrarMenuPrincipal();
 
 /*var paciente = new Owner("Isaac", 28, "3001234567");
 var mascota = new Pet("Firulais", 3, "Perro", "Labrador", paciente);
