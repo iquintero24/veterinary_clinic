@@ -82,7 +82,9 @@ namespace utils
             if (!Validations.ValidateName(ownerName))
             {
                 Console.WriteLine($"The owner name '{ownerName}' is invalid.");
+                Console.ReadKey();
                 return;
+               
             }
 
             var owner = patientService.GetOwnerByname(ownerName);
